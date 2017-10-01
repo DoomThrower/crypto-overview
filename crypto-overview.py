@@ -5,11 +5,11 @@ wallet = 'change-me'
 
 
 class Overview:
-    def __init__(self, wallet, cost_of_kWh_in_PLN=0.55, rig_kilowatt_usage=0.9):
+    def __init__(self, wallet, cost_of_kWh_in_pln=0.55, rig_kilowatt_usage=0.9):
         self.wallet = wallet
 
         self.usd_to_pln_ratio = Overview._get_usd_to_pln_ratio()
-        self.cost_of_kWh_in_PLN = cost_of_kWh_in_PLN
+        self.cost_of_kWh_in_pln = cost_of_kWh_in_pln
         self.rig_kilowatt_usage = rig_kilowatt_usage
 
         response = requests.get('https://api-zcash.flypool.org/miner/' + wallet + '/currentStats')
@@ -52,7 +52,7 @@ class Overview:
         return output
 
     def _clean_pln_income_per_min(self):
-        return self.usd_per_min * self.usd_to_pln_ratio - (self.cost_of_kWh_in_PLN * self.rig_kilowatt_usage) / 60
+        return self.usd_per_min * self.usd_to_pln_ratio - (self.cost_of_kWh_in_pln * self.rig_kilowatt_usage) / 60
 
 
 if __name__ == "__main__":
