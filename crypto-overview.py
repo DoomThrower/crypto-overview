@@ -1,11 +1,17 @@
 import requests
 import json
 
+import smtplib
+
 wallet = 'change-me'
+
+sender_gmail_account = 'change-me@gmail.com'
+sender_gmail_password = 'change-me'
+email_recipients = ['change@me-1.com', 'change@me-1.com']
 
 
 class Overview:
-    def __init__(self, wallet, cost_of_kWh_in_pln=0.55, rig_kilowatt_usage=0.9):
+    def __init__(self, wallet, cost_of_kWh_in_pln=0.55, rig_kilowatt_usage=1.050):
         self.wallet = wallet
 
         self.usd_to_pln_ratio = Overview._get_usd_to_pln_ratio()
@@ -54,8 +60,33 @@ class Overview:
     def _clean_pln_income_per_min(self):
         return self.usd_per_min * self.usd_to_pln_ratio - (self.cost_of_kWh_in_pln * self.rig_kilowatt_usage) / 60
 
+    def send_mail(self):
+        gmail_user = sender_gmail_account
+        gmail_password = sender_gmail_password
+
+        sent_from = gmail_user
+        to = email_recipients
+        subject = 'Crypto state'
+        body = str(self)
+
+        email_text = """\
+From: %s
+To: %s
+Subject: %s
+
+%s
+""" % (sent_from, ", ".join(to), subject, body)
+
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(sent_from, to, email_text)
+        server.close()
+
+        print 'Email sent!'
+
 
 if __name__ == "__main__":
     overview = Overview(wallet=wallet)
     print overview
-
+    overview.send_mail()
